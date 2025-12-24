@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎁 El Desafío del Amigo Invisible 🎁</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #c41e3a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            color: #1e3c72;
+        }
+
+        h1 {
+            color: #c41e3a;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .intro-text {
+            font-size: 1.2em;
+            margin: 20px 0;
+            line-height: 1.6;
+            color: #2a5298;
+        }
+
+        .game-container {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .game-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question {
+            font-size: 1.4em;
+            margin: 30px 0;
+            color: #1e3c72;
+            font-weight: bold;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .option-btn {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(42, 82, 152, 0.4);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        .option-btn.correct {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            animation: pulse 0.5s;
+        }
+
+        .option-btn.wrong {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            animation: shake 0.5s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .code-display {
+            background: #c41e3a;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            font-size: 3em;
+            font-weight: bold;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(196, 30, 58, 0.4);
+            animation: bounce 1s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .next-btn {
+            background: #c41e3a;
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            border-radius: 12px;
+            font-size: 1.3em;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .next-btn:hover {
+            background: #a01829;
+            transform: scale(1.05);
+        }
+
+        .progress {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .progress-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.3s;
+        }
+
+        .progress-dot.active {
+            background: #c41e3a;
+            transform: scale(1.3);
+        }
+
+        .progress-dot.completed {
+            background: #2ecc71;
+        }
+
+        .final-input {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .final-input input {
+            width: 80px;
+            height: 80px;
+            font-size: 2em;
+            text-align: center;
+            border: 3px solid #2a5298;
+            border-radius: 12px;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .separator {
+            font-size: 3em;
+            color: #c41e3a;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .collected-codes {
+            background: rgba(42, 82, 152, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .collected-codes h3 {
+            color: #2a5298;
+            margin-bottom: 15px;
+        }
+
+        .code-item {
+            display: inline-block;
+            background: #2a5298;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin: 5px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .reveal {
+            background: linear-gradient(135deg, #c41e3a 0%, #e74c3c 100%);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 30px 0;
+            color: white;
+            font-size: 1.5em;
+            line-height: 1.8;
+            box-shadow: 0 15px 40px rgba(196, 30, 58, 0.5);
+        }
+
+        .emoji {
+            font-size: 2em;
+            margin: 0 10px;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            border: none;
+            padding: 20px 60px;
+            border-radius: 15px;
+            font-size: 1.5em;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 30px;
+            transition: all 0.3s;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(46, 204, 113, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- PANTALLA DE INICIO -->
+        <div id="intro" class="game-container active">
+            <h1>🎁 El Desafío del Amigo Invisible 🎁</h1>
+            <div class="intro-text">
+                <p><strong>¡Hola Gonzalo!</strong> 🎅</p>
+                <p>Tu amigo invisible te ha preparado 4 desafíos divertidos.</p>
+                <p>Cada uno te dará un <strong>número secreto</strong>.</p>
+                <p>Al final, descubrirás una pista importante sobre quién soy...</p>
+                <p class="emoji">🤔❓🎯</p>
+                <p><strong>¿Estás listo para el reto?</strong></p>
+            </div>
+            <button class="start-btn" onclick="startGame()">¡COMENZAR! 🚀</button>
+        </div>
+
+        <!-- PROGRESO -->
+        <div id="progress-container" style="display: none;">
+            <div class="progress">
+                <div class="progress-dot" id="dot1"></div>
+                <div class="progress-dot" id="dot2"></div>
+                <div class="progress-dot" id="dot3"></div>
+                <div class="progress-dot" id="dot4"></div>
+            </div>
+        </div>
+
+        <!-- JUEGO 1: ¿CÓMO SE DICE EN INGLÉS? -->
+        <div id="game1" class="game-container">
+            <h2>🇬🇧 Desafío 1: English Time!</h2>
+            <div class="question">
+                ¿Cómo se dice en inglés...<br>
+                "Tu tía se partió en dos"? 🤣
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(1, 'a')">Your tea is broken in half ☕💔</button>
+                <button class="option-btn" onclick="checkAnswer(1, 'b')">Your aunt split in two 👵✂️</button>
+                <button class="option-btn" onclick="checkAnswer(1, 'c')">You are tea, split in two 🫖</button>
+            </div>
+        </div>
+
+        <!-- RESULTADO JUEGO 1 -->
+        <div id="result1" class="game-container">
+            <h2>¡CORRECTO! 🎉</h2>
+            <div class="question">Tu primer número es:</div>
+            <div class="code-display">19</div>
+            <p style="font-size: 1.2em; color: #2a5298;">¡Guárdalo bien! Lo necesitarás al final 📝</p>
+            <button class="next-btn" onclick="nextGame(2)">Siguiente Desafío ➡️</button>
+        </div>
+
+        <!-- JUEGO 2: ¿CÓMO SE DICE EN PORTUGUÉS? -->
+        <div id="game2" class="game-container">
+            <h2>🇧🇷 Desafío 2: Português (soy especialista)!</h2>
+            <div class="question">
+                ¿Cuál es el diminutivo correcto en portugués brasileño de "garota"? 👧
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(2, 'a')">Garotinha 👶</button>
+                <button class="option-btn" onclick="checkAnswer(2, 'b')">Garotiña 🤔</button>
+                <button class="option-btn" onclick="checkAnswer(2, 'c')">Bombonsiño 🍬</button>
+            </div>
+        </div>
+
+        <!-- RESULTADO JUEGO 2 -->
+        <div id="result2" class="game-container">
+            <h2>¡EXCELENTE! 🎊</h2>
+            <div class="question">Tu segundo número es:</div>
+            <div class="code-display">82</div>
+            <p style="font-size: 1.2em; color: #2a5298;">¡Ya llevas 2 números! Sigue así 💪</p>
+            <button class="next-btn" onclick="nextGame(3)">Siguiente Desafío ➡️</button>
+        </div>
+
+        <!-- JUEGO 3: ¿CÓMO SE DICE EN CHINO? -->
+        <div id="game3" class="game-container">
+            <h2>🇨🇳 Desafío 3: Chino mandarin Santalucence!</h2>
+            <div class="question">
+                ¿Cómo se dice en chino "tengo gases"? 💨😂
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(3, 'a')">Tu panzatuenamulloo 🥁</button>
+                <button class="option-btn" onclick="checkAnswer(3, 'b')">Tu kulito saka lama 🦙💨</button>
+                <button class="option-btn" onclick="checkAnswer(3, 'c')">Tuvientoviene decola 🌬️</button>
+            </div>
+        </div>
+
+        <!-- RESULTADO JUEGO 3 -->
+        <div id="result3" class="game-container">
+            <h2>¡JAJAJA PERFECTO! 😂🎯</h2>
+            <div class="question">Tu tercer número es:</div>
+            <div class="code-display">11</div>
+            <p style="font-size: 1.2em; color: #2a5298;">¡Solo falta uno más! 🔥</p>
+            <button class="next-btn" onclick="nextGame(4)">Último Desafío ➡️</button>
+        </div>
+
+        <!-- JUEGO 4: RELACIÓN FAMILIAR PROFESIONAL -->
+        <div id="game4" class="game-container">
+            <h2>👨‍👩‍👦 Desafío 4:  CNdF</h2>
+            <div class="question">
+                En el CNdF hay dos profesores que comparten algo muy especial...<br>
+                Uno enseña inglés 📚<br>
+                El otro enseña informática y "bailes árebes" ( a veces) 🎓<br><br>
+                ¿Qué relación familiar tienen?
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(4, 'a')">Primos hermanos 👬</button>
+                <button class="option-btn" onclick="checkAnswer(4, 'b')">Tío y sobrino 👨‍🦱👦</button>
+                <button class="option-btn" onclick="checkAnswer(4, 'c')">Hermanos 🤝</button>
+            </div>
+        </div>
+
+        <!-- RESULTADO JUEGO 4 -->
+        <div id="result4" class="game-container">
+            <h2>¡CORRECTO! ¡Esa es nuestra relación! 🎉</h2>
+            <div class="question">Tu cuarto y último número es:</div>
+            <div class="code-display">22</div>
+            <p style="font-size: 1.2em; color: #2a5298;">¡Ahora tienes los 4 números! 🎊</p>
+            <button class="next-btn" onclick="showFinal()">Ver Resultado Final 🎁</button>
+        </div>
+
+        <!-- PANTALLA FINAL -->
+        <div id="final" class="game-container">
+            <h2>🔐 ¡Momento de la Verdad!</h2>
+            <div class="collected-codes">
+                <h3>Has recolectado estos números:</h3>
+                <span class="code-item">19</span>
+                <span class="code-item">82</span>
+                <span class="code-item">11</span>
+                <span class="code-item">22</span>
+            </div>
+            <div class="question">
+                Organiza los números para descubrir la fecha especial:<br>
+                <small style="color: #c41e3a;">(Formato: DD / MM / AAAA)</small>
+            </div>
+            <div class="final-input">
+                <input type="number" id="input1" maxlength="2" oninput="autoTab(this, 'input2')">
+                <span class="separator">/</span>
+                <input type="number" id="input2" maxlength="2" oninput="autoTab(this, 'input3')">
+                <span class="separator">/</span>
+                <input type="number" id="input3" maxlength="4" oninput="autoTab(this, 'submit')">
+            </div>
+            <button class="next-btn" id="submit" onclick="checkFinalAnswer()">DESCUBRIR 🎯</button>
+        </div>
+
+        <!-- REVELACIÓN FINAL -->
+        <div id="revelation" class="game-container">
+            <h1>🎊 ¡MISTERIO RESUELTO (si no te diste cuenta so especial! 🎊</h1>
+            <div class="reveal">
+                <p class="emoji">🎅🎁🎄</p>
+                <p><strong>No te diré directamente quién es tu amigo invisible...</strong></p>
+                <p><strong>PERO</strong></p>
+                <p>Sí te diré que nació el:</p>
+                <div class="code-display" style="margin: 20px 0;">
+                    22 / 11 / 1982
+                </div>
+                <p class="emoji">🤔💭</p>
+                <p>Ahora piensa...</p>
+                <p>¿Quién en tu familia...</p>
+                <p>✅ Es tu <strong>TÍO</strong></p>
+                <p>✅ Es <strong>PROFESOR</strong> en el CNdF</p>
+                <p>✅ Está casado con <strong>GABRIELA</strong> (tu madrina)</p>
+                <p>✅ Nació el <strong>22/11/1982</strong></p>
+                <p class="emoji">🎯</p>
+                <p style="font-size: 2em; margin-top: 30px; color: #ffeb3b;">¿Ya sabes quién soy? 😉</p>
+                <p style="margin-top: 30px; font-size: 1.2em;">
+                    <strong>¡FELIZ NAVIDAD, SOBRINO! 🎄🎅</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let collectedCodes = [];
+
+        function startGame() {
+            document.getElementById('intro').classList.remove('active');
+            document.getElementById('progress-container').style.display = 'block';
+            document.getElementById('game1').classList.add('active');
+            document.getElementById('dot1').classList.add('active');
+        }
+
+        function checkAnswer(gameNum, answer) {
+            const correctAnswers = {
+                1: 'a', // Your tea is broken in half
+                2: 'a', // Garotinha
+                3: 'b', // Tu kulito saka lama
+                4: 'b'  // Tío y sobrino
+            };
+
+            const buttons = document.querySelectorAll(`#game${gameNum} .option-btn`);
+            
+            buttons.forEach(btn => {
+                btn.disabled = true;
+            });
+
+            if (answer === correctAnswers[gameNum]) {
+                event.target.classList.add('correct');
+                setTimeout(() => {
+                    document.getElementById(`game${gameNum}`).classList.remove('active');
+                    document.getElementById(`result${gameNum}`).classList.add('active');
+                    document.getElementById(`dot${gameNum}`).classList.remove('active');
+                    document.getElementById(`dot${gameNum}`).classList.add('completed');
+                }, 1000);
+            } else {
+                event.target.classList.add('wrong');
+                setTimeout(() => {
+                    event.target.classList.remove('wrong');
+                    buttons.forEach(btn => {
+                        btn.disabled = false;
+                    });
+                }, 500);
+            }
+        }
+
+        function nextGame(gameNum) {
+            document.getElementById(`result${gameNum - 1}`).classList.remove('active');
+            document.getElementById(`game${gameNum}`).classList.add('active');
+            document.getElementById(`dot${gameNum}`).classList.add('active');
+        }
+
+        function showFinal() {
+            document.getElementById('result4').classList.remove('active');
+            document.getElementById('final').classList.add('active');
+            document.getElementById('dot4').classList.remove('active');
+            document.getElementById('dot4').classList.add('completed');
+        }
+
+        function autoTab(current, nextFieldID) {
+            if (current.value.length >= parseInt(current.getAttribute('maxlength'))) {
+                if (nextFieldID === 'submit') {
+                    document.getElementById('submit').focus();
+                } else {
+                    document.getElementById(nextFieldID).focus();
+                }
+            }
+        }
+
+        function checkFinalAnswer() {
+            const input1 = document.getElementById('input1').value;
+            const input2 = document.getElementById('input2').value;
+            const input3 = document.getElementById('input3').value;
+
+            if (input1 === '22' && input2 === '11' && input3 === '1982') {
+                document.getElementById('final').classList.remove('active');
+                document.getElementById('revelation').classList.add('active');
+                document.getElementById('progress-container').style.display = 'none';
+            } else {
+                alert('🤔 Mmm... verifica los números. Recuerda el formato: DD / MM / AAAA\n\nPista: Piensa en cómo se escribe una fecha de nacimiento 📅');
+            }
+        }
+
+        // Hacer que los inputs solo acepten números
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.final-input input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
